@@ -1,0 +1,22 @@
+%.cmxa: %.cmx
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ $^
+
+%.cma: %.cmo
+	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ $^
+
+
+%.cmx: %.ml
+	ocamlfind ocamlopt -thread -I +camlp4 $(OCAMLOPT_OPTS) $(CAMLP4) -c $(patsubst %.cmx,%.ml,$@)
+
+%.cmi: %.mli
+	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) -c $(patsubst %.cmi,%.mli,$@)
+
+%.cmo: %.ml
+	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) $(CAMLP4) -c $(patsubst %.cmo,%.ml,$@)
+
+.d: $(sources) $(sources_mli)
+	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(sources) $(sources_mli) > .d
+
+
+# This won't exist until it is generated, so .d needs to run first
+-include .d

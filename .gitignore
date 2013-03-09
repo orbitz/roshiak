@@ -1,0 +1,10 @@
+*~
+*.cma
+*.a
+*.cmxa
+*.cmo
+*.cmi
+*.cmx
+*.o
+.d
+lib/protobuf/protobuf_test
