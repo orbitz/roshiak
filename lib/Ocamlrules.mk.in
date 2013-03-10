@@ -14,6 +14,12 @@
 %.cmo: %.ml
 	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) $(CAMLP4) -c $(patsubst %.cmo,%.ml,$@)
 
+%.native: %.cmx
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -o $@ $^
+
+%.byte: %.cmo
+	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -o $@ $^
+
 .d: $(sources) $(sources_mli)
 	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(sources) $(sources_mli) > .d
 
