@@ -1,18 +1,67 @@
+all_sources=$(LIB_MODULES) $(NON_LIB_MODULES)
+
+sources_mli=$(LIB_MODULES:%.ml=%.mli)
+native_cmx=$(all_sources:%.ml=%.cmx)
+byte_cmo=$(all_sources:%.ml=%.cmo)
+neutral_cmi=$(sources_mli:%.mli=%.cmi)
+
+ifdef PACK
+	byte_targets_deps=$(PACK).cmo
+	native_targets_deps=$(PACK).cmx
+	OCAMLOPT_OPTS:=-for-pack \
+	$(shell echo $(PACK) | sed 's/\([a-z]\)\([a-zA-Z0-9]*\)/\u\1\2/g') \
+	$(OCAMLOPT_OPTS)
+else
+	byte_targets_deps=$(byte_cmo)
+	native_targets_deps=$(native_cmx)
+endif
+
+.PHONY: byte-code native-code clean
+
+$(BYTE_TARGETS): $(byte_targets_deps)
+
+$(NATIVE_TARGETS): $(native_targets_deps)
+
+$(PACK).cmx: $(native_cmx)
+	ocamlfind ocamlopt -pack -o $@ $^
+
+$(PACK).cmo: $(byte_cmo)
+	ocamlfind ocamlc -pack -o $@ $^
+
+$(native_cmx): $(all_sources) $(neutral_cmi)
+
+$(byte_cmo): $(all_sources) $(neutral_cmi)
+
+$(neutral_cmi): $(sources_mli)
+
+byte-code: $(BYTE_TARGETS)
+
+native-code: $(NATIVE_TARGETS)
+
 %.cmxa: %.cmx
+ifeq ($@, $(PACK).cmxa)
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ $(PACK).cmx
+else
 	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ $^
+endif
 
 %.cma: %.cmo
+ifeq ($@, $(PACK).cma)
+	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ $(PACK).cmo
+else
 	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ $^
-
+endif
 
 %.cmx: %.ml
-	ocamlfind ocamlopt -thread -I +camlp4 $(OCAMLOPT_OPTS) $(CAMLP4) -c $(patsubst %.cmx,%.ml,$@)
+	ocamlfind ocamlopt -thread -I +camlp4 $(OCAMLOPT_OPTS) $(CAMLP4) -c \
+	$(patsubst %.cmx,%.ml,$@)
 
 %.cmi: %.mli
 	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) -c $(patsubst %.cmi,%.mli,$@)
 
 %.cmo: %.ml
-	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) $(CAMLP4) -c $(patsubst %.cmo,%.ml,$@)
+	ocamlfind ocamlc -thread -I +camlp4 $(OCAMLC_OPTS) $(CAMLP4) -c \
+	$(patsubst %.cmo,%.ml,$@)
 
 %.native: %.cmx
 	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -o $@ $^
@@ -20,9 +69,11 @@
 %.byte: %.cmo
 	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -o $@ $^
 
-.d: $(sources) $(sources_mli)
-	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(sources) $(sources_mli) > .d
+.d: $(all_sources) $(sources_mli)
+	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(all_sources) $(sources_mli) > .d
 
+clean:
+	-rm -f $(TARGETS) $(native_cmx) $(byte_cmo) $(neutral_cmi) .d *.o *.a
 
 # This won't exist until it is generated, so .d needs to run first
 -include .d

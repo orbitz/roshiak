@@ -2,31 +2,17 @@ CAMLP4=
 OCAMLC_OPTS=
 OCAMLOPT_OPTS=
 
-cources=
+LIB_MODULES=
+NON_LIB_MODULES=
 
-sources=$(cources)
+BYTE_TARGETS=
+NATIVE_TARGETS=
 
-sources_mli=$(cources:%.ml=%.mli)
+.PHONY: all test
 
-native_cmx=$(sources:%.ml=%.cmx)
-
-byte_cmo=$(sources:%.ml=%.cmo)
-
-native_cmi=$(sources_mli:%.mli=%.cmi)
-
-.PHONY: all native byte native-code byte-code test clean
-
-all: native byte
-
-native-code: native
-
-byte-code: byte
+all: native-code byte-code
 
 test:
-
-native:
-
-byte:
 
 # Dependencies
 include ../Ocamlrules.mk.in
