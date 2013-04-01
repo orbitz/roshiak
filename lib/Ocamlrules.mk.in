@@ -64,16 +64,20 @@ endif
 	$(patsubst %.cmo,%.ml,$@)
 
 %.native: %.cmx
-	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -o $@ $^
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -o $@ \
+	$(patsubst %.ml,%.cmx,$(shell \
+	ocamlfind ocamldep $(OCAMLOPT_OPTS) -sort $(patsubst %.cmx,%.ml,$^)))
 
 %.byte: %.cmo
-	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -o $@ $^
+	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -o $@ \
+	$(patsubst %.ml,%.cmo,$(shell \
+	ocamlfind ocamldep $(OCAMLOPT_OPTS) -sort $(patsubst %.cmo,%.ml,$^)))
 
 .d: $(all_sources) $(sources_mli)
 	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(all_sources) $(sources_mli) > .d
 
 clean:
-	-rm -f $(TARGETS) $(native_cmx) $(byte_cmo) $(neutral_cmi) .d *.o *.a
+	-rm -f $(BYTE_TARGETS) $(NATIVE_TARGETS) $(native_cmx) $(byte_cmo) $(neutral_cmi) .d *.o *.a
 
 # This won't exist until it is generated, so .d needs to run first
 -include .d
