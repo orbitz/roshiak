@@ -6,5 +6,6 @@
 *.cmi
 *.cmx
 *.o
+*.native
+*.byte
 .d
-lib/protobuf/protobuf_test
