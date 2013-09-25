@@ -1,4 +1,4 @@
-.PHONY: all clean test
+.PHONY: all clean test test_trampoline examples examples_trampoline install
 
 all:
 	$(MAKE) -C lib
@@ -15,6 +15,9 @@ examples:
 
 examples_trampoline: all
 	$(MAKE) -C examples
+
+install: all
+	$(MAKE) -C lib install
 
 clean:
 	$(MAKE) -C lib clean
