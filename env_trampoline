@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+export OCAMLPATH=$PWD/lib:$OCAMLPATH
+
+make $1
