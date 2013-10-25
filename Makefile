@@ -1,6 +1,9 @@
-.PHONY: all clean test test_trampoline examples examples_trampoline install
+.PHONY: all all_trampoline clean test test_trampoline examples examples_trampoline install
 
 all:
+	./env_trampoline all_trampoline
+
+all_trampoline:
 	$(MAKE) -C lib
 
 test:
