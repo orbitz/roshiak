@@ -5,6 +5,12 @@ native_cmx=$(all_sources:%.ml=%.cmx)
 byte_cmo=$(all_sources:%.ml=%.cmo)
 neutral_cmi=$(sources_mli:%.mli=%.cmi)
 
+test_native_cmx=$(TEST_MODULES:%.ml=%.cmx)
+test_byte_cmo=$(TEST_MODULES:%.ml=%.cmo)
+
+test_native=$(TEST_MODULES:%.ml=%.native_test)
+test_byte=$(TEST_MODULES:%.ml=%.byte_test)
+
 ifdef PACK
 	byte_targets_deps=$(PACK).cmo
 	native_targets_deps=$(PACK).cmx
@@ -17,6 +23,7 @@ else
 endif
 
 .PHONY: byte-code native-code clean
+.PHONY: test-byte-code test-native-code test
 
 $(BYTE_TARGETS): $(byte_targets_deps)
 
@@ -28,15 +35,26 @@ $(PACK).cmx: $(native_cmx)
 $(PACK).cmo: $(byte_cmo)
 	ocamlfind ocamlc -pack -o $@ $^
 
-$(native_cmx): $(all_sources) $(neutral_cmi)
+$(test_native): $(test_native_cmx)
 
-$(byte_cmo): $(all_sources) $(neutral_cmi)
-
-$(neutral_cmi): $(sources_mli)
+$(test_byte): $(test_byte_cmo)
 
 byte-code: $(BYTE_TARGETS)
 
 native-code: $(NATIVE_TARGETS)
+
+test-byte-code: $(test_byte)
+
+test-native-code: $(test_native)
+
+$(test_native_cmx): $(TEST_DEPS)
+
+$(test_byte_cmo): $(TEST_DEPS)
+
+test: $(test_byte) $(test_native)
+	for test in $^ ; do \
+	  ./$$test ; \
+	done
 
 %.cmxa: %.cmx
 ifeq ($@, $(PACK).cmxa)
@@ -68,16 +86,34 @@ endif
 	$(patsubst %.ml,%.cmx,$(shell \
 	ocamlfind ocamldep $(OCAMLOPT_OPTS) -sort $(patsubst %.cmx,%.ml,$^)))
 
+%.native_test: %.cmx
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -g -o $@ \
+	$(patsubst %.native_test,%.cmx,$@)
+
 %.byte: %.cmo
 	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -o $@ \
 	$(patsubst %.ml,%.cmo,$(shell \
 	ocamlfind ocamldep $(OCAMLOPT_OPTS) -sort $(patsubst %.cmo,%.ml,$^)))
 
+%.byte_test: %.cmo
+	ocamlfind ocamlc $(OCAMLC_OPTS) -thread -custom -linkpkg -g -o $@ \
+	$(patsubst %.byte_test,%.cmo,$@)
+
 .d: $(all_sources) $(sources_mli)
 	ocamlfind ocamldep $(OCAMLC_OPTS) $(CAMLP4) $(all_sources) $(sources_mli) > .d
 
 clean:
-	-rm -f $(BYTE_TARGETS) $(NATIVE_TARGETS) $(native_cmx) $(byte_cmo) $(neutral_cmi) .d *.o *.a
+	-rm -f \
+	  $(BYTE_TARGETS) \
+	  $(NATIVE_TARGETS) \
+	  $(native_cmx) \
+	  $(byte_cmo) \
+	  $(neutral_cmi) \
+	  $(test_byte) \
+	  $(test_native) \
+	  $(test_byte_cmo) \
+	  $(test_native_cmx) \
+	  .d *.o *.a *.cmi
 
 # This won't exist until it is generated, so .d needs to run first
 -include .d
