@@ -35,6 +35,12 @@ $(PACK).cmx: $(native_cmx)
 $(PACK).cmo: $(byte_cmo)
 	ocamlfind ocamlc -pack -o $@ $^
 
+$(native_cmx): $(EXTERNAL_DEPS)
+
+$(byte_cmo): $(EXTERNAL_DEPS)
+
+$(neutral_cmi): $(EXTERNAL_DEPS)
+
 $(test_native): $(test_native_cmx)
 
 $(test_byte): $(test_byte_cmo)
