@@ -35,9 +35,9 @@ $(PACK).cmx: $(native_cmx)
 $(PACK).cmo: $(byte_cmo)
 	ocamlfind ocamlc -pack -o $@ $^
 
-$(native_cmx): $(EXTERNAL_DEPS)
+$(native_cmx): $(EXTERNAL_DEPS) $(neutral_cmi)
 
-$(byte_cmo): $(EXTERNAL_DEPS)
+$(byte_cmo): $(EXTERNAL_DEPS) $(neutral_cmi)
 
 $(neutral_cmi): $(EXTERNAL_DEPS)
 
@@ -90,7 +90,7 @@ endif
 %.native: %.cmx
 	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -o $@ \
 	$(patsubst %.ml,%.cmx,$(shell \
-	ocamlfind ocamldep $(OCAMLOPT_OPTS) -sort $(patsubst %.cmx,%.ml,$^)))
+	ocamlfind ocamldep $(OCAMLDEP_OPTS) -sort $(patsubst %.cmx,%.ml,$^)))
 
 %.native_test: %.cmx
 	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -thread -linkpkg -g -o $@ \
