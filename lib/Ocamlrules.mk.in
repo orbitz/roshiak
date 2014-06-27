@@ -66,14 +66,18 @@ test: $(test_byte) $(test_native)
 ifeq ($@, $(PACK).cmxa)
 	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ $(PACK).cmx
 else
-	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ $^
+	ocamlfind ocamlopt $(OCAMLOPT_OPTS) -a -thread -I +camlp4 -o $@ \
+	$(patsubst %.ml,%.cmx,$(shell \
+	ocamlfind ocamldep $(OCAMLDEP_OPTS) -sort $(patsubst %.cmx,%.ml,$^)))
 endif
 
 %.cma: %.cmo
 ifeq ($@, $(PACK).cma)
 	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ $(PACK).cmo
 else
-	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ $^
+	ocamlfind ocamlc $(OCAMLC_OPTS) -custom -a -thread -I +camlp4 -o $@ \
+	$(patsubst %.ml,%.cmo,$(shell \
+	ocamlfind ocamldep $(OCAMLDEP_OPTS) -sort $(patsubst %.cmo,%.ml,$^)))
 endif
 
 %.cmx: %.ml
