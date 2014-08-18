@@ -1,8 +1,10 @@
 CAMLP4=
-OCAMLC_OPTS=
+OCAMLC_OPTS=-w '@f@p@u@s@40'
 OCAMLOPT_OPTS=$(OCAMLC_OPTS)
 
 NON_LIB_MODULES=
+
+EXTERNAL_DEPS=
 
 native_bin=$(NON_LIB_MODULES:%.ml=%.native)
 
