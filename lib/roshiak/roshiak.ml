@@ -117,4 +117,3 @@ let select ~host ~port ~k =
       let robj = robj_of_res res in
       let rset = merge_contents (R.contents robj) in
       Deferred.return (Ok (Roshi_set.to_list rset)))
-
