@@ -25,6 +25,6 @@ of this writing and supports more operational features.
 * How is Roshi better?
 Roshi is actually used in production.  Roshiak has not even been tested in
 production.  Currently Roshiak is probably slower than Roshi.  Roshiak only
-supports getting the entire dataset on read, Roshi supports getting partial
-data.  There are a few possible solutions for this in the Roshiak model
-depending on requirements.
+supports getting the entire dataset on read, Roshi supports more sophisticated
+'select' calls.  There are a few possible solutions for this in the Roshiak
+model depending on requirements.
