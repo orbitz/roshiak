@@ -1,2 +1,30 @@
 * About
-Template for my usual ocaml projects
+I recently stumbled upon [[https://github.com/soundcloud/roshi][Roshi]], a CRDT set server written on to of Redis.  Roshi
+looked like an obvious good usecase for Riak.  Roshiak is a simple demonstration
+of how this could be implemented on top of Riak.
+
+Because Roshiak is written on top of Riak it offers some functionality that
+Roshi lacks including:
+
+- Elasticity - nodes can be added and removed and Riak will rebalance the data
+  automatically.
+- Read repair - Riak handles ensuring that all nodes contain the same values for
+  a key on read.
+- Active Anti-Entropy - Riak will occasionally make sure that the keys on
+  various nodes match even without being read.  Roshi-walker implements a
+  similar mechanism.  AAE in Riak is implemented using merkle trees, minimizing
+  the amount of data moved around.
+- Multi datacenter - If you don't mind paying, Riak gives multi datacenter
+  support.
+- Hinted handoff - If a node goes down, the lost data is shuffled to other
+  nodes, ensuring the replication factor is maintained.
+
+Roshiak is implemented in ~140 lines of code, about 1/10th of that of Roshi as
+of this writing and supports more operational features.
+
+* How is Roshi better?
+Roshi is actually used in production.  Roshiak has not even been tested in
+production.  Currently Roshiak is probably slower than Roshi.  Roshiak only
+supports getting the entire dataset on read, Roshi supports getting partial
+data.  There are a few possible solutions for this in the Roshiak model
+depending on requirements.
