@@ -83,7 +83,7 @@ let update ~host ~port ~k ~t ~v f =
     ~port
     (fun c ->
       let module R = Riakc.Robj in
-      Riakc.Conn.get c ~b:bucket v
+      Riakc.Conn.get c ~b:bucket k
       >>= fun res ->
       let robj = robj_of_res res in
       let contents = R.contents robj in
