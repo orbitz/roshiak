@@ -1,0 +1,6 @@
+name="roshiak"
+version="1.0.0"
+description="Roshi on Riak"
+requires="core,async,riakc"
+archive(byte)="roshiak.cma"
+archive(native)="roshiak.cmxa"

@@ -1,4 +1,4 @@
-SUBDIRS = example
+SUBDIRS = roshiak
 
 all_apps = $(SUBDIRS)
 
