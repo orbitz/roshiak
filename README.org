@@ -36,6 +36,8 @@ date then publishing them through OPAM.  You will also need a local Riak
 running. Setting up a devrel is straight forward and documented at the Basho
 website.
 
+This won't work yet, but soon!
+
 #+BEGIN_EXAMPLE
 opam install riakc
 cd roshiak
