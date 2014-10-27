@@ -28,3 +28,24 @@ production.  Currently Roshiak is probably slower than Roshi.  Roshiak only
 supports getting the entire dataset on read, Roshi supports more sophisticated
 'select' calls.  There are a few possible solutions for this in the Roshiak
 model depending on requirements.
+
+* How do I use it?
+Part of doing this project was realizing how behind my help libraries were
+relative to their dependencies.  Right now I am working on bringing them up to
+date then publishing them through OPAM.  Once that is done:
+
+#+BEGIN_EXAMPLE
+opam install riakc
+cd roshiak
+make examples
+#+END_EXAMPLE
+
+You will now have ~examples/roshiak_cli.native~.
+
+#+BEGIN_EXAMPLE
+roshiak_cli.native add localhost 8081 snoopdogg foobar
+roshiak_cli.native sel localhost 8081 snoopdogg
+roshiak_cli.native del localhost 8081 snoopdogg foobar
+roshiak_cli.native sel localhost 8081 snoopdogg
+#+END_EXAMPLE
+
