@@ -29,6 +29,9 @@ supports getting the entire dataset on read, Roshi supports more sophisticated
 'select' calls.  There are a few possible solutions for this in the Roshiak
 model depending on requirements.
 
+The Roshi set implementation is also incomplete in that it does not garbage
+collect aggressively.
+
 * How do I use it?
 Part of doing this project was realizing how behind my help libraries were
 relative to their dependencies.  Right now I am working on bringing them up to
