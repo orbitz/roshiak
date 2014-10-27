@@ -32,7 +32,9 @@ model depending on requirements.
 * How do I use it?
 Part of doing this project was realizing how behind my help libraries were
 relative to their dependencies.  Right now I am working on bringing them up to
-date then publishing them through OPAM.  Once that is done:
+date then publishing them through OPAM.  You will also need a local Riak
+running. Setting up a devrel is straight forward and documented at the Basho
+website.
 
 #+BEGIN_EXAMPLE
 opam install riakc
